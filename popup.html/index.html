@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body { width: 250px; font-family: sans-serif; padding: 20px; background: #222; color: white; }
+    h3 { margin: 0 0 15px 0; color: #0f0; text-transform: uppercase; letter-spacing: 1px; }
+    button {
+      width: 100%; padding: 10px; background: #e63946; border: none; color: white; 
+      font-weight: bold; cursor: pointer; border-radius: 4px; font-size: 16px;
+    }
+    button:hover { background: #ff4d5a; }
+    .status { font-size: 12px; margin-top: 10px; color: #ccc; }
+  </style>
+</head>
+<body>
+  <h3>IRCTC Auto-Hacker</h3>
+  <button id="startBtn">START ENGINE</button>
+  <div class="status" id="statusMsg">Status: Idle</div>
+
+  <script>
+    document.getElementById('startBtn').addEventListener('click', function() {
+      document.getElementById('statusMsg').innerText = "Status: Injecting...";
+      
+      chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+        if (tabs[0] && tabs[0].url.includes("irctc.co.in")) {
+          chrome.tabs.sendMessage(tabs[0].id, {type: "START_AUTO_BOOK"}, function(response) {
+            if (response && response.status === "running") {
+              document.getElementById('statusMsg').innerText = "Status: Hunting Tickets...";
+              document.getElementById('startBtn').innerText = "RUNNING";
+              document.getElementById('startBtn').disabled = true;
+            } else {
+              document.getElementById('statusMsg').innerText = "Error: Could not inject";
+            }
+          });
+        } else {
+          document.getElementById('statusMsg').innerText = "Error: Not on IRCTC site";
+        }
+      });
+    });
+  </script>
+</body>
+</html>
